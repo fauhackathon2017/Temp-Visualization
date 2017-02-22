@@ -68,7 +68,7 @@ $.get('/getTemperature', function(jsonObj) {
   }
   console.log(jsonObj.key);
   var tempF=JSON.stringify(jsonObj.key.TempF);
-  var tempC=JSON.stringify(jsonObj.key.TempC);
+  var tempC=JSON.stringify(jsonObj.key.TempC) || (tempF-32)/1.8;
   var humidity=JSON.stringify(jsonObj.key["Humid%"]);
   var date=JSON.stringify(jsonObj.key.created_at);
 
