@@ -62,6 +62,10 @@ IBMCore.common.util.config.set({
 </body>
 <script>
 $.get('/getTemperature', function(jsonObj) {
+  if(jsonObj=="no data")
+  {
+    alert("Error in configuring application");
+  }
   console.log(jsonObj.key);
   var tempF=JSON.stringify(jsonObj.key.TempF);
   var tempC=JSON.stringify(jsonObj.key.TempC);

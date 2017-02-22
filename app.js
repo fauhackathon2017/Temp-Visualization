@@ -19,7 +19,13 @@ var https = require("https");
 var jsonDataobj,jsonObj,jsonRow;
 var jsonData="";
 
+
 app.get('/getTemperature', function(request, response){
+  console.log(process.env.basicAuthTempVizToken);
+  if(!process.env.basicAuthTempVizToken && process.env.basicAuthTempVizToken!=""){
+    response.send("no data");
+    return;
+  }
   var options = {
     "method": "GET",
     "hostname": "484059b1-efd4-4898-a9c3-7f38a51c12fe-bluemix.cloudant.com",
@@ -40,8 +46,14 @@ app.get('/getTemperature', function(request, response){
 
     res.on("end", function () {
       var body = Buffer.concat(chunks);
-      console.log("JSON ", JSON.stringify(JSON.parse(body).rows[0]));
-      response.send(JSON.parse(body).rows[0]);
+      body=JSON.parse(body);
+      console.log("DATA FROM SERVER", JSON.stringify(body));
+      if(body.error){
+        response.send("no data");
+        return;
+      }
+      console.log("JSON ", JSON.stringify(body.rows[0]));
+      response.send(body.rows[0]);
       console.log(body.toString());
     });
   });
