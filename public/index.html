@@ -1,0 +1,115 @@
+
+<html lang="en-US">
+
+<head>
+  <!-- <link rel="stylesheet" href="stylesheets/style.css"> -->
+  <link rel="stylesheet" href="/stylesheets/c3.min.css">
+  <link href="https://1.www.s81c.com/common/v18/css/www.css" rel="stylesheet" />
+  <script src="https://1.www.s81c.com/common/v18/js/www.js"></script>
+  <link href="https://1.www.s81c.com/common/v18/css/forms.css" rel="stylesheet" />
+  <script src="https://1.www.s81c.com/common/v18/js/forms.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://d3js.org/d3.v3.min.js"></script>
+  <script type="text/javascript" src="js/c3.js"></script>
+</script>
+<script>
+IBMCore.common.util.config.set({
+  masthead: {
+    type: "alternate"
+  }
+});
+</script>
+<title>IOT Temperature Visualisation</title>
+<script>
+</script>
+</head>
+<body>
+  <div class="ibm-sitenav-menu-container">
+    <!-- <img src="https://www.ibm.com/standards/web/images/masthead_popup.svg" alt="masthead-default" class="ibm-resize ibm-downsize" title=""> -->
+    <div id="ibm-home"><a href="https://www.ibm.com/us-en/?lnk=m">IBM®</a></div> &nbsp;&nbsp;
+    <div class="ibm-sitenav-menu-name"><a href="#">Temperature Visualisation</a></div>
+  </div>
+  <div style="height:40px"></div>
+  <div class="ibm-columns">
+    <div class="ibm-col-6-2 ibm-center">
+      <h1 align="center">Temp-C</h1>
+      <div id="fahrenheitGauge">
+
+        CHART GOES HERE
+      </div>
+    </div>
+
+    <div class="ibm-col-6-2 ibm-center">
+      <h1 align="center">Temp-F</h1>
+      <div id="celsiusGauge">
+
+        CHART GOES HERE
+      </div>
+    </div>
+    <!-- </div>
+    <div class="ibm-columns"> -->
+    <div class="ibm-col-6-2 ibm-center">
+      <h1 align="center"> Humidity</h1>
+      <div id="humidityGauge">
+
+        CHART GOES HERE
+      </div>
+    </div>
+    <!-- <div class="ibm-col-4-4 ibm-center"> 4-2<br> 580 px</div> -->
+  </div>
+
+
+</body>
+<script>
+$.get('/getTemperature', function(jsonObj) {
+  console.log(jsonObj.key);
+  var tempF=JSON.stringify(jsonObj.key.TempF);
+  var tempC=JSON.stringify(jsonObj.key.TempC);
+  var humidity=JSON.stringify(jsonObj.key["Humid%"]);
+  var date=JSON.stringify(jsonObj.key.created_at);
+
+  visualize = function(jsonData,divId){
+    data=jsonData;
+    c3.generate({bindto:divId,
+      data: {
+        columns: [
+          ['data', data]
+        ],
+        type: 'gauge'
+      },
+      gauge: {
+        label: {
+          format: function(value, ratio) {
+            if(divId.indexOf("humidityGauge")>-1)
+            {
+              return value + '%';
+            }
+            else
+            {
+              return value;
+            }
+          },
+          show: true // to turn off the min/max labels.
+        },
+        min: 0,
+      },
+      color: {
+        pattern: ['#ffff00 ', '#FFA500', '#FF0000', '#B22222'], // the three color levels for the percentage values.
+        threshold: {
+          values: [0, 30, 60, 90]
+        }
+      },
+      tooltip: {
+        show: false
+      },
+      size: {
+        height: 120
+      }
+    });
+  }
+  visualize(tempC,'#fahrenheitGauge');
+  visualize(tempF,'#celsiusGauge');
+  visualize(humidity,'#humidityGauge');
+});
+</script>
+</html>
